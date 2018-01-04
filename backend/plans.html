@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <title>Create a subscription</title>
+    <link rel="stylesheet" href="/public/pure-min.css">
+    <link rel="stylesheet" href="/public/content.css">
+    <style>
+      html, body { height: 100%; padding: 0 }
+      body { background: #000 url(/public/texture.jpg?4) }
+      .container { height: 100%; background: transparent url(/public/pieces.png) no-repeat center bottom}
+      .padder { padding: 1rem }
+      .panel { background-color: rgba(0, 0, 0, 0.5); padding: 2rem; width: 80%; max-width: 30rem; margin: 0 auto }
+      .panel h1 { color: #FFF; font-size: 1.6rem }
+      .panel h1 span { color: #EEE }
+      .panel h2 { color: rgba(0, 0, 0, 0.75); text-decoration: underline }
+      .panel p { max-width: 60rem; font-size: 1rem; line-height: 2rem; margin: 0 1rem 1rem 0 }
+      .block { margin-bottom: 1rem; background-color: #EEE; border-radius: 0.5rem; padding: 1rem }
+      .block p { margin: 1rem 0 0 0 }
+      .block2 { background-color: rgb(221, 212, 181) }
+      .block2 h3 { color: #000 }
+      .block2 ul,
+      .block2 li { margin: 0; padding: 0; list-style-type: none }
+      .block2 li { color: #000; line-height: 1.6rem }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="padder">
+        <div class="panel">
+          <h1>PuzzleBoss <span>Unlimited Jigsaws</span></h1>
+          <div class="block">
+            <h2>Repeat billing</h2>
+            <p>Pay monthly or save about 16% and pay a year in advance.</p>
+            <p class="pure-button-group" role="group">
+              <a class="pure-button pure-button-primary" href="/register?planid=monthly">$2.99 per month</a>
+              <a class="pure-button pure-button-primary" href="/register?planid=annually">$29.99 per year</a>
+            </p>
+          </div>
+          <div class="block block2">
+            <ul>
+              <li>Cancel any time or automatically after 1 month of inactivity.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h2>One-time payment</h2>
+            <p>Enjoy all the new content forever and never pay again!</p>
+            <p class="pure-button-group" role="group">
+              <a class="pure-button pure-button-primary" href="/register?planid=lifetime">$69.99 lifetime</a>
+            </p>
+          </div>
+          <div class="block block2">
+            <ul>
+              <li>You can share your PIN with your family and friends.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h2>Corporate facilities</h2>
+            <p>A single PIN all of your residents can share to enjoy access.</p>
+            <p class="pure-button-group" role="group">
+              <a class="pure-button pure-button-primary" href="/register?planid=monthly-corporate">$49.99 per month</a>
+              <a class="pure-button pure-button-primary" href="/register?planid=annually-corporate">$499.99 per year</a>
+            </p>
+          </div>
+          <div class="block block2">
+            <ul>
+              <li>PuzzleBoss Inc provides invoices for all charges.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

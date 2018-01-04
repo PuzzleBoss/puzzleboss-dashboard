@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <title>Staged photos</title>
+    <link rel="stylesheet" href="/public/pure-min.css">
+    <link rel="stylesheet" href="/public/content.css">
+    <template id="navbar-template"></template>
+    <template id="navbar-html-template" navbar-file="navbar-options"></template>
+    <style>
+      .results, .results li { list-style-type: none; margin: 0; padding: 0; }
+      .results li { display: inline-block; margin: 0 1rem 1rem 0; position: relative;
+        background: transparent url(/public/ajax-loader.gif) no-repeat center center }
+      .results form { padding: 0; margin: 0; display: inline-block; text-align: right }
+      .results img { display: block }
+      .results button { border: none; background-color: #900; color: #FFF; padding: 0.5rem }
+      .results button.blue { background-color: #369 }
+      .staging-options { position: absolute; bottom: 0; width: 100%; text-align: right }
+      .pure-controls { margin-bottom: 2rem }
+      .submitFrame { border: 0; width: 0; height: 0; position: absolute; z-index: 999; overflow: hidden }
+      textarea { display: none }
+    </style>
+    <script>
+      function remove(form) {
+        var result = form.parentNode.parentNode
+        result.opacity = result.opacity || 1.0
+        function fade() {
+          result.opacity -= 0.01
+          result.style.opacity = result.opacity
+          if(result.opacity > 0) {
+            return setTimeout(fade, 1)
+          }
+        }
+        return setTimeout(fade, 1)
+      }
+    
+      function lazyLoad () {
+        var images = document.getElementsByClassName('lazy')
+        if (!images.length) {
+          document.onscroll = null
+          return
+        }
+        var bottomLimit = -200
+        var topLimit = window.innerHeight + 200
+        for (var i = 0, len = images.length; i < len; i++) {
+          var image = images[i]
+          if (image.src) {
+            continue
+          }
+          var src = image.getAttribute('data-src')
+          if (!src) {
+            continue
+          }
+          var el = image.parentNode
+          var skip = false
+          while (el.parentNode) {
+            el = el.parentNode
+            if (el.style && (el.style.visibility === 'hidden' || el.style.display === 'none')) {
+              skip = true
+              break
+            }
+          }
+          if (skip) {
+            continue
+          }
+          var rect = image.getBoundingClientRect()
+          if (rect.top < bottomLimit || rect.top > topLimit) {
+            continue
+          }
+          image.src = src
+          image.classList.remove('lazy')
+        }
+      }
+      
+      setInterval(lazyLoad, 20)
+    </script>
+  </head>
+  <body>
+    <ul id="results" class="results"></ul>
+    <iframe name="submitFrame" class="submitFrame" />
+  </body>
+  <template id="result-item-template">
+    <li id="result-${id}" style="width: ${width}px; height: ${height}px;">
+      <img data-src="${url}" class="lazy" style="width: ${width}px; height: ${height}px;" />
+      <div class="staging-options">
+        <form method="POST">
+          <input type="hidden" name="flickrid" value="${id}" />
+          <textarea name="json">$json</textarea>
+          <button class="blue">Crop and publish</button>
+        </form>
+        <form onsubmit="remove(this)" target="submitFrame" method="GET" action="delete-staged">
+          <input type="hidden" name="flickrid" value="${id}" />
+          <button>Delete</button>
+        </form>
+      </div>
+    </li>
+  </template>
+</html>

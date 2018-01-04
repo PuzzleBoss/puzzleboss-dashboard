@@ -1,0 +1,99 @@
+<html>
+    <head>
+      <title>Published puzzles</title>
+      <link rel="stylesheet" href="/public/pure-min.css">
+      <link rel="stylesheet" href="/public/content.css">
+      <template id="navbar-template"></template>
+      <template id="navbar-html-template" navbar-file="navbar-options"></template>
+      <style>
+        .results, .results li { list-style-type: none; margin: 0; padding: 0 }
+        .results li { display: inline-block; background: transparent url(/public/ajax-loader.gif) no-repeat center center;
+          width: 480px; height: 360px; margin: 0 1rem 1rem 0; position: relative }
+        .results form { padding: 0; margin: 0; display: inline-block; text-align: right }
+        .results img { display: block;  width: 480px; height: 360px }
+        .results button { border: none; background-color: #900; color: #FFF; padding: 0.5rem }
+        .results button.blue { background-color: #369 }
+        .results button.blue2 { background-color: #036 }
+        .staging-options { position: absolute; bottom: 0; width: 100%; text-align: right }
+        .submitFrame { border: 0; width: 0; height: 0; position: absolute; z-index: 999; overflow: hidden }
+        .published { display: inline-block; background-color: #000; color: #CCC; padding: 0.5rem }
+        .unpublished { display: inline-block; background-color: #000; color: #FC0; padding: 0.5rem }
+      </style>
+      <script>
+        function remove(form) {
+          var result = form.parentNode.parentNode
+          result.opacity = result.opacity || 1.0
+          function fade() {
+            result.opacity -= 0.01
+            result.style.opacity = result.opacity
+            if(result.opacity > 0) {
+              return setTimeout(fade, 1)
+            }
+          }
+          return setTimeout(fade, 1)
+        }
+
+        function lazyLoad () {
+          var images = document.getElementsByClassName('lazy')
+          if (!images || !images.length) {
+            document.onscroll = null
+            return
+          }
+          var bottomLimit = -200
+          var topLimit = window.innerHeight + 200
+          for (var i = 0, len = images.length; i < len; i++) {
+            var image = images[i]
+            var src = image.getAttribute('data-src')
+            if (!src) {
+              continue
+            }
+            var el = image.parentNode
+            var skip = false
+            while (el.parentNode) {
+              el = el.parentNode
+              if (el.style && (el.style.visibility === 'hidden' || el.style.display === 'none')) {
+                skip = true
+                break
+              }
+            }
+            if (skip) {
+              continue
+            }
+            var rect = image.getBoundingClientRect()
+            if (rect.top < bottomLimit || rect.top > topLimit) {
+              continue
+            }
+            image.classList.remove('lazy')
+            image.src = src
+          }
+        }
+        setInterval(lazyLoad, 20)
+      </script>
+    </head>
+    <body>
+      <div id="status-container"></div>
+      <ul id="results" class="results"></ul>
+      <iframe name="submitFrame" class="submitFrame" />
+    </body>
+    <template id="result-item-template">
+      <li id="result-${flickrid}">
+        <img data-src="${url}" class="lazy"/>
+        <div class="staging-options">
+          <div class="published" id="published-${flickrid}">Published ${publishedRelative}</div>
+          <div class="unpublished" id="unpublished-${flickrid}">Not published yet</div>
+          <form method="GET" action="crop">
+            <input type="hidden" name="flickrid" value="${flickrid}" />
+            <button class="blue">Crop</button>
+          </form>
+          <form method="GET" action="edit">
+            <input type="hidden" name="flickrid" value="${flickrid}" />
+            <button class="blue2">Edit</button>
+          </form>
+          <form onsubmit="remove(this)" target="submitFrame" method="POST" action="delete-published">
+            <input type="hidden" name="flickrid" value="${flickrid}" />
+            <button>Delete</button>
+          </form>
+        </div>
+      </li>
+    </template>
+  </html>

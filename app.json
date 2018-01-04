@@ -1,0 +1,29 @@
+{
+    "title": "PuzzleBoss Unlimited",
+    "administrators": ["benlowry" ,"dayanaramirez"],
+    "header": {
+        "backgroundColor": "#FFF",
+        "textColor": "#036"
+    },
+    "navbar": {
+        "backgroundColor": "#07C",
+        "textColor": "#FFF"
+    },
+    "modules": [ "@userappstore/dashboard-subscriptions" ],
+    "menus": {
+        "administrator": [
+            { "url": "/administrator/puzzleboss/puzzleboss-administration-center", "text": "PuzzleBoss administration" }
+        ]
+    },
+    "server": {
+        "beforeAuthentication": [
+            "/node_modules/@userappstore/dashboard-subscriptions/server/stripe-apikey.js"
+        ]
+    },
+    "routes": {
+      "/": { "html": "/backend/index.html", "template": false, "guest": true },
+      "/app.json": { "js": "/backend/app.json.js", "template": false, "guest": true },
+      "/plans": { "html": "/backend/plans.html", "template": false, "guest": true },
+      "/puzzles.txt": { "js": "/backend/puzzles.txt.js", "template": false, "guest": true }
+    }
+}

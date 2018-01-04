@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <title>Photo search</title>
+    <link rel="stylesheet" href="/public/pure-min.css">
+    <link rel="stylesheet" href="/public/content.css">
+    <template id="navbar-template"></template>
+    <template id="navbar-html-template" navbar-file="navbar-options"></template>
+    <style>
+      .results, .results li { list-style-type: none; margin: 0; padding: 0 }
+      .results li { display: inline-block; padding: 0 0.5rem 0.5rem 0 }
+      .results form { padding: 0; margin: 0 }
+      .results textarea { display: none }
+      .results button { border: none; padding: 0; margin: 0 }
+      .submitFrame { border: 0; width: 0; height: 0; position: absolute; z-index: 999; overflow: hidden }
+      .searches,
+      .searches li { margin: 0; padding: 0; list-style-type: none }
+      .searches li { display: inline-block; margin: 0 0.5rem 0.5rem 0 }
+      .searches a { background-color: #369; color:#FFF; padding: 0.5rem; text-decoration: none; font-size: 0.9rem }
+      .searches li.delete a { background-color: #900 }
+      .pure-controls { margin-bottom: 2rem }
+    </style>
+    <script>
+      function fadeOut(form) {
+        form.opacity = form.opacity || 1.0
+        form.disabled = 'disabled'
+        form.onsubmit = function(e) {
+          e.preventDefault()
+          return false
+        }
+        function fade() {
+          form.opacity -= 0.01
+          form.style.opacity = form.opacity
+          if(form.opacity > 0.25) {
+            return setTimeout(fade, 1)
+          }
+        }
+        return setTimeout(fade, 1)
+      }
+      function lazyLoad () {
+        var images = document.getElementsByClassName('lazy')
+        if (!images.length) {
+          document.onscroll = null
+          return
+        }
+        var bottomLimit = -200
+        var topLimit = window.innerHeight + 200
+        for (var i = 0, len = images.length; i < len; i++) {
+          var image = images[i]
+          if (image.src) {
+            continue
+          }
+          var src = image.getAttribute('data-src')
+          if (!src) {
+            continue
+          }
+          var el = image.parentNode
+          var skip = false
+          while (el.parentNode) {
+            el = el.parentNode
+            if (el.style && (el.style.visibility === 'hidden' || el.style.display === 'none')) {
+              skip = true
+              break
+            }
+          }
+          if (skip) {
+            continue
+          }
+          var rect = image.getBoundingClientRect()
+          if (rect.top < bottomLimit || rect.top > topLimit) {
+            continue
+          }
+          image.src = src
+          image.classList.remove('lazy')
+        }
+      }
+      setInterval(lazyLoad, 20)
+    </script>
+  </head>
+  <body>
+    <div id="status-container"></div>
+    <form id="submit-form" method="GET" class="pure-form">
+      <div class="pure-control-group">
+        <input id="search" name="search" type="text" placeholder="Search text or flickr id" />
+      </div>
+      <div class="pure-controls">
+        <button class="pure-button pure-button-primary">Search photos</button>
+      </div>
+      <ul id="searches" class="searches">
+        <li>Saved searches</li>
+      </ul>
+    </form>
+    <ul id="results" class="results"></ul>
+    <iframe name="submitFrame" class="submitFrame" />
+  </body>
+  <template id="result-item-template">
+    <li>
+      <form onsubmit="fadeOut(this)" target="submitFrame" method="POST" action="">
+        <input type="hidden" name="confirm" value="true" />
+        <input type="hidden" name="flickrid" value="${id}" />
+        <textarea name="json">${json}</textarea>
+        <button><img data-src="${url}" class="lazy" width="${nWidth}" height="${nHeight}" /></button>
+      </form>
+    </li>
+  </template>
+  <template id="search-item-template">
+    <li><a href="search?search=${search}">${search}</a</li>
+  </template>
+  <template id="delete-search-item-template">
+    <li class="delete"><a href="delete-search?search=${search}">Delete ${search}</a</li>
+  </template>
+  <template id="submit-error-template">
+    <p class="error.message">An error occurred performing the search.</p>
+  </template>
+</html>

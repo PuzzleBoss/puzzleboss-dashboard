@@ -1,0 +1,112 @@
+<html>
+  <head>
+    <title>Edit photo</title>
+    <link rel="stylesheet" href="/public/pure-min.css">
+    <link rel="stylesheet" href="/public/content.css">
+    <template id="navbar-template"></template>
+    <template id="navbar-html-template" navbar-file="navbar-photo-options"></template>
+    <style>
+      .preview { width: 100%; display: none }
+      .placeholder { width: 100%; height: 100% }
+      .placeholder img { position: absolute; top: 50%; left: 50%; margin-left: -22px; margin-top: -6px }
+      .pure-u-8-24 { max-width: 20rem }
+      .pure-u-8-24 input { display: block; width: 100%; max-width: 19rem }
+      h2 { color: #666; font-weight: normal; font-size: 1rem; margin: 0 0 0.5rem 0 }
+      th { color: #999; text-align: right; max-width: 8rem; font-weight: normal }
+      th, td { padding: 0.5rem 0.25rem; border-bottom: 1px dotted #CCC; font-size: 0.8rem }
+      table tr:last-of-type th, 
+      table tr:last-of-type td { border: none }
+      div.pure-checkbox label { display: inline-block; font-size: 0.9rem }
+      div.pure-checkbox input { display: inline-block; width: auto }
+    </style>
+    <script>
+      var img, preview
+      window.onload = function() {
+        preview = document.getElementById('preview')
+        return reloadImage()
+      }
+      
+      function reloadImage (e) {
+        if (!img) {
+          img = new Image()
+          img.src = preview.getAttribute('data-src')
+          img.onerror = reloadImage
+          img.onload = onPreviewLoaded
+          return
+        }
+        img = null
+        return setTimeout(reloadImage, 500)        
+      }
+
+      function onPreviewLoaded (e) {
+        preview.src = preview.getAttribute('data-src')
+        preview.style.display = 'block'
+        document.getElementById('placeholder').style.display = 'none'
+      }
+    </script>
+  </head>
+  <body>
+    <div class="pure-g">
+      <div class="pure-u-8-24">
+        <form class="pure-form pure-form-stacked" method="POST">
+          <div class="pure-control-group">
+            <label for="title">Title</label>
+            <input required type="text" name="title" id="title" />
+          </div>
+          <div class="pure-control-group">
+            <label for="description">Description</label>
+            <input required type="text" name="description" id="description" />
+          </div>
+          <div class="pure-control-group">
+            <label for="photographer">Photographer</label>
+            <input required type="text" name="photographer" id="photographer" />
+          </div>
+          <div class="pure-control-group">
+            <label for="publish">Publish</label>
+            <div class="pure-checkbox">
+              <label>
+                <input type="checkbox" id="publish" name="publish" value="true" /> 
+                Add to puzzle feed
+              </label>
+            </div>
+          </div>
+          <div class="pure-controls">
+            <button id="publish-button" class="pure-button pure-button-primary">Save puzzle</button>
+            <button id="update-button" class="pure-button">Update puzzle</button>
+          </div>
+        </form>
+        <h2>Flickr information</h2>
+        <table id="flickrObjectTable"></table>
+      </div>
+      <div class="pure-u-1-24"></div>
+      <div class="pure-u-15-24">
+        <div id="placeholder" class="placeholder">
+          <img id="spinner" src="/public/ajax-loader.gif" />
+        </div>
+        <img id="preview" class="preview" />
+      </div>
+    </div>
+  </body>
+  <template id="flickrObjectTemplate"> 
+    <tr>
+      <th>Title</th>
+      <td>${title}</td>
+    </tr>
+    <tr>
+      <th>Photographer</th>
+      <td>${photographer}</td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td>${description}</td>
+    </tr>
+    <tr>
+      <th>Tags</th>
+      <td>${tags}</td>
+    </tr>
+    <tr>
+      <th>Flickr</th>
+      <td><a href="https://flickr.com/photos/${owner}/${id}" class="pure-button">Open on Flickr</a></td>
+    </tr>
+  </template>
+</html>

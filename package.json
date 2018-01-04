@@ -1,0 +1,29 @@
+{
+  "name": "puzzleboss-unlimited",
+  "description": "PuzzleBoss Unlimited SaaS and administrative websuite",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "8.1.4",
+    "npm": "5.0.3"
+  },
+
+  "homepage": "https://puzzleboss.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/puzzleboss/puzzleboss-dashboard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@puzzleboss/flickrapi": "^0.6.4",
+    "@userappstore/dashboard": "^1.0.38",
+    "@userappstore/dashboard-subscriptions": "^1.0.22",
+    "aws-sdk": "^2.151.0",
+    "easyimage": "^2.1.0"
+  }
+}

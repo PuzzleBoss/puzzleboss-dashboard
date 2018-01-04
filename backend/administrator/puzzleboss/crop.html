@@ -1,0 +1,188 @@
+<html>
+  <head>
+    <title>Crop photo</title>
+    <link rel="stylesheet" href="/public/pure-min.css">
+    <link rel="stylesheet" href="/public/content.css">
+    <template id="navbar-template"></template>
+    <template id="navbar-html-template" navbar-file="navbar-photo-options"></template>
+    <script>
+      var flickrObject, scale, img, crop, cropContainer, cropInfo, borderDiv, frameDiv, leftDiv, rightDiv, topDiv, bottomDiv, submitForm
+      var minWidth, minHeight, requiredWidth, requiredHeight
+      window.onload = function() {
+        requiredWidth = parseInt(document.getElementById('requiredWidth').value, 10)
+        requiredHeight = parseInt(document.getElementById('requiredHeight').value, 10)
+        flickrObject = JSON.parse(decodeURI(document.getElementById('json').value))
+        flickrObject.o_width = +flickrObject.o_width
+        flickrObject.o_height = +flickrObject.o_height
+        cropContainer = document.getElementById('crop')
+        cropInfo = document.getElementById('cropInfo')
+        borderDiv = document.getElementById('border')
+        frameDiv = document.getElementById('frame')
+        leftDiv = document.getElementById('left')
+        rightDiv = document.getElementById('right')
+        topDiv = document.getElementById('top')
+        bottomDiv = document.getElementById('bottom')
+        submitForm = document.getElementById('submit-form')
+        crop = {x: 0, y: 0, width: 0, height: 0}
+        img = new Image()
+        img.onload = onImageLoadComplete
+        img.src = 'https://farm' + flickrObject.farm + '.staticflickr.com/' + flickrObject.server + '/' +
+          flickrObject.id + '_' + flickrObject.secret + '_b.jpg'
+      }
+      function onImageLoadComplete () {
+        scale = img.width / flickrObject.o_width
+        minWidth = Math.ceil(requiredWidth * scale)
+        minHeight = Math.ceil(requiredHeight * scale)
+        crop.x = Math.floor((img.width - minWidth) / 2)
+        crop.y = Math.floor((img.height - minHeight) / 2)
+        crop.width = minWidth
+        crop.height = minHeight
+        cropContainer.style.width = img.width + 'px'
+        cropContainer.style.height = img.height + 'px'
+        cropContainer.style.backgroundImage = 'url(' + img.src + ')'
+        cropContainer.img = img
+        cropContainer.onmousedown = onMouseDownStartDragOrResize
+        cropContainer.style.display = 'block'
+        borderDiv.style.display = 'block'
+        borderDiv.onmouseup = borderDiv.children[0].onmouseup = onMouseUpStopDragAndResize
+        frameDiv.style.display = 'block'
+        document.addEventListener('mousemove', onMouseMoveDragOrResize)
+        document.addEventListener('mouseup', onMouseUpStopDragAndResize)
+        submitForm.style.width = img.width + 'px'
+        submitForm.style.display = 'block'
+        return renderCropRegion(img)
+      }
+      function onMouseDownStartDragOrResize (e) {
+        var name = e.target.getAttribute('name')
+        if (name === 'drag') {
+          img.drag = true
+          img.resize = false
+          img.lastMouseX = e.pageX - e.screenX
+          img.lastMouseY = e.pageY - e.screenY
+          cropContainer.style.cursor = 'move'
+        } else if (name === 'resize') {
+          img.drag = false
+          img.resize = true
+          img.lastMouseX = e.pageX - e.screenX
+          img.lastMouseY = e.pageY - e.screenY
+          cropContainer.style.cursor = 'nwse-resize'
+        }
+      }
+      function onMouseMoveDragOrResize (e) {
+        if (!img.drag && !img.resize) {
+          return
+        }
+        if (img.drag) {
+          onMouseMoveDrag(e, img)
+        } else if (img.resize) {
+          onMouseMoveResize(e, img)
+        }
+      }
+      function onMouseUpStopDragAndResize (e) {
+        cropContainer.style.cursor = ''
+        img.drag = false
+        img.resize = false
+      }
+      function onMouseMoveDrag (e, img) {
+        var newX = crop.x + e.screenX - img.lastMouseX
+        var newY = crop.y + e.screenY - img.lastMouseY
+        img.lastMouseX = e.screenX
+        img.lastMouseY = e.screenY
+        if (newX < 0 || newX + crop.width > img.width) {
+          return
+        }
+        if (newY < 0 || newY + crop.height > img.height) {
+          return
+        }
+        if (crop.x === newX && crop.y === newY) {
+          return
+        }
+        crop.x = newX
+        crop.y = newY
+        return renderCropRegion(img)
+      }
+      function onMouseMoveResize (e, img) {
+        var newWidth = crop.width + e.screenX - img.lastMouseX
+        var newHeight = newWidth * (requiredHeight / requiredWidth)
+        img.lastMouseX = e.screenX
+        img.lastMouseY = e.screenY
+        if (newWidth + crop.x > img.width) {
+          return
+        }
+        if (newHeight + crop.y > img.height) {
+          return
+        }
+        if (newWidth > img.width || newWidth < minWidth) {
+          return
+        }
+        if (newHeight > img.height || newHeight < minHeight) {
+          return
+        }
+        crop.width = newWidth
+        crop.height = newHeight
+        return renderCropRegion(img)
+      }
+      function renderCropRegion (img) {
+        leftDiv.style.left = '0'
+        leftDiv.style.top = '0'
+        leftDiv.style.width = crop.x + 'px'
+        leftDiv.style.height = img.height + 'px'
+        rightDiv.style.left = (crop.x + crop.width) + 'px'
+        rightDiv.style.top = '0'
+        rightDiv.style.width = (img.width - crop.x - crop.width) + 'px'
+        rightDiv.style.height = img.height + 'px'
+        topDiv.style.left = crop.x + 'px'
+        topDiv.style.top = '0'
+        topDiv.style.width = crop.width + 'px'
+        topDiv.style.height = crop.y + 'px'
+        bottomDiv.style.left = crop.x + 'px'
+        bottomDiv.style.top = (crop.y + crop.height) + 'px'
+        bottomDiv.style.width = crop.width + 'px'
+        bottomDiv.style.height = (img.height - crop.y - crop.height) + 'px'
+        borderDiv.style.width = crop.width + 'px'
+        borderDiv.style.height = crop.height + 'px'
+        borderDiv.style.left = crop.x + 'px'
+        borderDiv.style.top = crop.y + 'px'
+        cropInfo.value = JSON.stringify({
+          x: Math.floor(crop.x / scale),
+          y: Math.floor(crop.y / scale),
+          width: Math.ceil(crop.width / scale),
+          height: Math.ceil(crop.height / scale)
+        })
+      }
+    </script>
+    <style>
+      .cropper { background-repeat: no-repeat; position: relative; cursor: pointer; display: none } 
+      .frame { pointer-events: none; display: none; position: absolute }
+      .side { position: absolute; background-color: rgba(255, 255, 255, 0.5) }
+      .border { position: absolute }
+      .resizer { display: block; cursor: nwse-resize; width: 0.5rem; height: 0.5rem; background-color: #FFF;
+        position: absolute; right: -0.5rem; bottom: -0.5rem; z-index: 2;
+        border-top: 0.5rem solid #FFF; border-left: 0.5rem solid #FFF; 
+        border-right: 0.5rem solid #000; border-bottom: 0.5rem solid #000 }
+      .pure-form { position: absolute; top: 0; left: 0; margin: 0; z-index: 1 }
+      .pure-form button { margin: 0; border-radius: 0 }
+      .pure-form textarea { display: none }
+    </style>
+  </head>
+  <body>      
+    <div id="crop" class="cropper">
+      <div id="frame" class="frame">
+        <div id="left" class="side"></div>
+        <div id="right" class="side"></div>
+        <div id="top" class="side"></div>
+        <div id="bottom" class="side"></div>
+      </div>
+      <div name="drag" id="border" class="border">
+        <div name="resize" id="resize" class="resizer"></div>
+      </div>
+      <form id="submit-form" method="POST" class="pure-form">
+        <textarea id="json"></textarea>
+        <input type="hidden" id="requiredWidth" />
+        <input type="hidden" id="requiredHeight" />
+        <input type="hidden" name="crop" id="cropInfo" /> 
+        <button class="pure-button pure-button-primary">Save cropped photo</button>
+      </form>
+    </div>
+  </body>
+</html>

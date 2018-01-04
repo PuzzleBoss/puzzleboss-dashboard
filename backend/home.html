@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <title>PuzzleBoss Unlimited</title>
+        <link rel="stylesheet" href="/public/pure-min.css">
+        <link rel="stylesheet" href="/public/content.css">
+        <style>
+            p { max-width: 60rem; font-size: 1rem; line-height: 2rem }
+            .appstores { margin: 0 0 2rem 0; padding: 0; list-style-type: none }
+            .appstores li { display: inline; margin: 0; padding: 0; list-style-type: none }
+            .appstores a,
+            .appstores img { display: inline-block; max-width: 16rem; margin: 0 1rem 1rem 0 }
+            .subscription { width: auto; border: 1px solid #CCC }
+            .subscription th { text-align: right; min-width: 10rem; background-color: #EEE }
+            .subscription th,
+            .subscription td { border: 1px solid #CCC }
+            .subscription td { min-width: 8rem }
+            .num { display: inline-block; margin-right: 0.5rem; color: #FFF; font-size: 1rem;
+                font-weight: bold; padding: 0.25rem 0.5rem; background-color: #369; border-radius: 1rem }
+            table { display: none }
+        </style>
+    </head>
+    <template id="navbar-template">
+        <a href="/home">Home</a>
+        <a href="/plans">Select a plan</a>
+    </template>
+    <body>
+        <h1>PuzzleBoss Unlimited</h1>
+        <p>This is a new service from PuzzleBoss that provides unlimited access to our entire
+            catalog, in up to 1200 piece puzzles!</p>
+        <h2><span class="num">1</span> Download the free app</h2>
+        <p>You can download PuzzleBoss Unlimited Jigsaws on any of these devices:</p>
+        <ul class="appstores">
+            <li><a href="https://play.google.com/?"><img src="/public/amazon-store.png" title="Amazon App Store"></a></li>
+            <li><a href="https://amazon.com/?"><img src="/public/play-store.png" title="Play Store"></a></li>
+            <li><a href="https://ios.com/?"><img src="/public/ios-store.png" title="iOS App Store"></a></li>
+        </ul>
+        <h2><span class="num">2</span> Setup your subscription</h2>
+        <p>You can pay once to become a lifetime supporter, pay monthly or annually.</p>
+        <table class="subscription pure-table">
+            <tr>
+                <th>Subscription</th>
+                <td>Active</td>
+            </tr>
+            <tr>
+                <th>PIN</th>
+                <td>123757</td>
+            </tr>
+            <tr>
+                <th>Next charge</th>
+                <td>Never</td>
+            </tr>
+        </table>
+        <p class="pure-button-group" role="group">
+            <a href="/plans" class="pure-button pure-button-primary">Select a plan</a>
+        </p>
+        <h2><span class="num">3</span> Enter your PIN in the app and enjoy!</h2>
+        <p>We're still growing our catalog so there will often be brand new puzzles too!</p>
+    </body>
+</html>
